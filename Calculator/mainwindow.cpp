@@ -1,6 +1,9 @@
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include <math.h>
+#include <stdlib.h>
 
 double firstNum;
 bool user_is_typing_secondNumber=false;
@@ -24,17 +27,22 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->pushButton_plusMinus,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
     connect(ui->pushButton_percent,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
+    connect(ui->pushButton_absValue,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
+    connect(ui->pushButton_square,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
+    connect(ui->pushButton_squareRoot,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
+    connect(ui->pushButton_convertToBinary,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
 
     connect(ui->pushButton_multiply,SIGNAL(released()),this,SLOT(binary_operation_pressed()));
     connect(ui->pushButton_add,SIGNAL(released()),this,SLOT(binary_operation_pressed()));
     connect(ui->pushButton_minus,SIGNAL(released()),this,SLOT(binary_operation_pressed()));
     connect(ui->pushButton_divide,SIGNAL(released()),this,SLOT(binary_operation_pressed()));
 
+
     ui->pushButton_add->setCheckable(true);
     ui->pushButton_multiply->setCheckable(true);
     ui->pushButton_divide->setCheckable(true);
     ui->pushButton_minus->setCheckable(true);
-    setFixedSize( 241,366);
+    setFixedSize( 241,422);
 }
 
 MainWindow::~MainWindow()
@@ -105,7 +113,34 @@ void MainWindow::unary_operation_pressed()
         input = QString::number(labelnumber,'g',15);
         ui->label->setText(input);
     }
-
+    else if(button->text() == "^2")
+    {
+        labelnumber = (ui->label->text()).toDouble();
+        labelnumber *= labelnumber;
+        input = QString::number(labelnumber,'g',15);
+        ui->label->setText(input);
+    }
+    else if(button->text() == "sqrt")
+    {
+        labelnumber = (ui->label->text()).toDouble();
+        labelnumber = sqrt(labelnumber);
+        input = QString::number(labelnumber,'g',15);
+        ui->label->setText(input);
+    }
+    else if(button->text() == "|x|")
+    {
+        labelnumber = (ui->label->text()).toDouble();
+        labelnumber *= -1;
+        input = QString::number(labelnumber,'g',15);
+        ui->label->setText(input);
+    }
+    else if(button->text() == "B")
+    {
+        labelnumber = (ui->label->text()).toDouble();
+        char convertedNumber[32];
+        itoa(labelnumber, convertedNumber, 2);
+        ui->label->setText(convertedNumber);
+    }
     //error correction codse is still missing
 }
 
