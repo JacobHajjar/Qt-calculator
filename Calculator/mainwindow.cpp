@@ -26,12 +26,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_9,SIGNAL(released()),this,SLOT(digit_pressed()));
 
     connect(ui->pushButton_plusMinus,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
-    connect(ui->pushButton_percent,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
+    //connect(ui->pushButton_percent,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
     connect(ui->pushButton_absValue,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
     connect(ui->pushButton_square,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
     connect(ui->pushButton_squareRoot,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
     connect(ui->pushButton_convertToBinary,SIGNAL(released()),this,SLOT(unary_operation_pressed()));
 
+    connect(ui->pushButton_percent,SIGNAL(released()),this,SLOT(binary_operation_pressed()));
     connect(ui->pushButton_multiply,SIGNAL(released()),this,SLOT(binary_operation_pressed()));
     connect(ui->pushButton_add,SIGNAL(released()),this,SLOT(binary_operation_pressed()));
     connect(ui->pushButton_minus,SIGNAL(released()),this,SLOT(binary_operation_pressed()));
@@ -42,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pushButton_multiply->setCheckable(true);
     ui->pushButton_divide->setCheckable(true);
     ui->pushButton_minus->setCheckable(true);
+    ui->pushButton_percent->setCheckable(true);
     setFixedSize( 241,422);
 }
 
@@ -57,7 +59,8 @@ void MainWindow::digit_pressed()
     QString input;
     double labelnumber;
 
-    if((ui->pushButton_add->isChecked() || ui->pushButton_divide->isChecked() || ui->pushButton_minus->isChecked() || ui->pushButton_multiply->isChecked()) && (!user_is_typing_secondNumber))
+    if((ui->pushButton_add->isChecked() || ui->pushButton_divide->isChecked() || ui->pushButton_minus->isChecked() || ui->pushButton_multiply->isChecked() ||
+        ui->pushButton_percent->isChecked()) && (!user_is_typing_secondNumber))
     {
         user_is_typing_secondNumber=true;
         labelnumber = button->text().toDouble();
@@ -105,14 +108,13 @@ void MainWindow::unary_operation_pressed()
         input = QString::number(labelnumber,'g',15);
         ui->label->setText(input);
     }
-
-    else if(button->text() == "%")
+    /*else if(button->text() == "%")
     {
         labelnumber = (ui->label->text()).toDouble();
         labelnumber *= 0.01;
         input = QString::number(labelnumber,'g',15);
         ui->label->setText(input);
-    }
+    }*/
     else if(button->text() == "^2")
     {
         labelnumber = (ui->label->text()).toDouble();
@@ -130,9 +132,11 @@ void MainWindow::unary_operation_pressed()
     else if(button->text() == "|x|")
     {
         labelnumber = (ui->label->text()).toDouble();
-        labelnumber *= -1;
-        input = QString::number(labelnumber,'g',15);
-        ui->label->setText(input);
+        if (0 > labelnumber) {
+            labelnumber *= -1;
+            input = QString::number(labelnumber,'g',15);
+            ui->label->setText(input);
+        }
     }
     else if(button->text() == "B")
     {
@@ -150,6 +154,7 @@ void MainWindow::on_pushButton_clear_released()
     ui->pushButton_minus->setChecked(false);
     ui->pushButton_multiply->setChecked(false);
     ui->pushButton_divide->setChecked(false);
+    ui->pushButton_percent->setChecked(false);
     user_is_typing_secondNumber=false;
 
     ui->label->setText("0");
@@ -185,6 +190,11 @@ void MainWindow::on_pushButton_equals_released()
     {
         labelnumber = firstNum / secondNum;
         ui->pushButton_divide->setChecked(false);
+    }
+    else if(ui->pushButton_percent->isChecked())
+    {
+        labelnumber = (firstNum * 0.01) * secondNum;
+        ui->pushButton_percent->setChecked(false);
     }
 
     input = QString::number(labelnumber,'g',15);
